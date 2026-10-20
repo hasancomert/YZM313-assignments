@@ -1,0 +1,26 @@
+YEREL TEST: harness FedFST ile yamalı orijinal main.py (Cora, seed 24, varsayılan ayarlar, CPU)
+
+harness (python -m fgcl_bench.run --method fedfst --dataset cora --seed 24):
+  AA 61.7726 AF 32.7114
+   [[100.0, 0.0, 0.0], [99.145302, 94.64286, 0.0], [85.470085, 43.75, 56.097561]]
+
+orijinal main.py, ThreadPoolExecutor tek iş parçacığına indirildi (python -m fgcl_bench.run_main_sequential):
+  Final AA: 61.7726
+  Final AF: 32.7114
+  tensor([[100.0000,   0.0000,   0.0000],
+          [ 99.1453,  94.6429,   0.0000],
+          [ 85.4701,  43.7500,  56.0976]])
+
+orijinal main.py, thread'li (1. koşu):
+  Final AA: 38.9687
+  Final AF: 55.5823
+  tensor([[100.0000,   0.0000,   0.0000],
+          [ 92.3077,  86.6071,   0.0000],
+          [ 70.0855,   5.3571,  41.4634]])
+
+orijinal main.py, thread'li (2. koşu, aynı seed):
+  Final AA: 80.6263
+  Final AF: 12.9273
+  tensor([[100.0000,   0.0000,   0.0000],
+          [ 94.8718,  93.7500,   0.0000],
+          [ 99.1453,  68.7500,  73.9837]])

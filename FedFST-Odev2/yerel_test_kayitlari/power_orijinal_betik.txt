@@ -1,0 +1,41 @@
+YEREL TEST: POWER'ın kendi orijinal betik yolu (tools/power_original_once.py), Cora, config.py varsayılanları, CPU
+Veri: OpenFGL FGLDataset (Louvain, 3 istemci, 0.2/0.4/0.4), seed 2025. OpenFGL için TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 gerekti (torch>=2.6).
+
+== power_orig_run
+client 0 tasks: [4, 5]=>[2, 3]=>[0, 1]
+client 1 tasks: [4, 5]=>[2, 3]=>[0, 1]
+client 2 tasks: [2, 3]=>[0, 1]=>[4, 5]
+[Task 0 Finish] Global AA: 95.03	Global AF: -1.00
+[Task 1 Finish] Global AA: 81.81	Global AF: 9.01
+[Task 2 Finish] Global AA: 64.07	Global AF: 8.14
+POWER orijinal betik | Cora | global_eval=False | AA=64.07 AF=8.14
+tensor([[95.0311,  0.0000,  0.0000],
+        [86.0248, 77.6000,  0.0000],
+        [79.8137, 76.5333, 35.8491]])
+[Task 2 Finish] Global AA: 64.07	Global AF: 8.14
+
+== power_orig_run_global
+client 0 tasks: [4, 5]=>[2, 3]=>[0, 1]
+client 1 tasks: [4, 5]=>[2, 3]=>[0, 1]
+client 2 tasks: [2, 3]=>[0, 1]=>[4, 5]
+[Task 0 Finish] Global AA: 71.43	Global AF: -1.00
+[Task 1 Finish] Global AA: 80.28	Global AF: -13.66
+[Task 2 Finish] Global AA: 57.49	Global AF: 2.62
+POWER orijinal betik | Cora | global_eval=True | AA=57.49 AF=2.62
+tensor([[71.4286,  0.0000,  0.0000],
+        [85.0932, 75.4667,  0.0000],
+        [66.4596, 75.2000, 30.8176]])
+[Task 2 Finish] Global AA: 57.49	Global AF: 2.62
+
+== görev sırası tüm istemcilerde aynı (tools/power_original_sync_order.py; class_incremental içindeki np.random.shuffle(tasks) yalnızca bu test için kapatıldı)
+client 0 tasks: [0, 1]=>[2, 3]=>[4, 5]
+client 1 tasks: [0, 1]=>[2, 3]=>[4, 5]
+client 2 tasks: [0, 1]=>[2, 3]=>[4, 5]
+[Task 0 Finish] Global AA: 96.05	Global AF: -1.00
+[Task 1 Finish] Global AA: 45.83	Global AF: 4.39
+[Task 2 Finish] Global AA: 30.75	Global AF: 1.90
+POWER orijinal betik, görev sırası eşit | Cora | AA=30.75 AF=1.90
+tensor([[96.0526,  0.0000,  0.0000],
+        [91.6667,  0.0000,  0.0000],
+        [18.8596, 73.3871,  0.0000]])
+[Task 2 Finish] Global AA: 30.75	Global AF: 1.90

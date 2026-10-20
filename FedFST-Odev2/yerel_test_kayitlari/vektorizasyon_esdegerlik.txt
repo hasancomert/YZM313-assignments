@@ -1,0 +1,17 @@
+YEREL TEST: FedFST vektörizasyon eşdeğerlik testi (python -m fgcl_bench.equivalence), CPU, torch 2.11.0
+(Notebook'un yerel SMOKE çalıştırmasındaki Bölüm 6.1 çıktısı; Colab'da aynı test yeniden çalışır.)
+
+Writing fgcl_bench/equivalence.py
+
+[cpu]
+  OK   utils.reduce_homophilic_edges                    60 durum  
+  OK   utils.reduce_heterophilic_edges                  60 durum  
+  OK   60 iterasyonluk karışık azaltma dizisi           20 durum  
+  OK   OursClient.get_learned_Homophily_Level           40 durum  
+  OK   feature_gen_train KL kaybı (+gradyan)            54 durum  (karşılaştırılan: kayıp, gradyan, RNG durumu)
+[cpu]
+  OK   partition.get_subgraph_by_node (flag=True/False)   60 durum  
+  OK   partition.louvain_partitioner (Cora)              1 durum  orijinal 0.8 sn, yeni 0.3 sn
+SONUÇ: tüm eşdeğerlik testleri geçti
+
+
