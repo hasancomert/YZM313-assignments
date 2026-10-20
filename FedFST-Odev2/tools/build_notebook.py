@@ -170,6 +170,7 @@ Kodda gördüğüm ve karşılaştırmayı etkileyen ayrıntılar:
 * **Görev sırası.** POWER'ın veri katmanı (`data.py`, `class_incremental`) görevlerin sırasını **her istemci için ayrı ayrı karıştırıyor** (`np.random.shuffle(tasks)`). Yani orijinal senaryoda istemciler aynı anda farklı sınıfları öğreniyor. Ortak protokolde ise, FedFST'deki gibi, tüm istemciler aynı sırayı izliyor.
 * **Değerlendirme.** `utils.start()` varsayılan olarak (`global_eval = False`) her istemcinin **yerel** modelini kendi verisinde değerlendiriyor. Ortak protokolde global model değerlendiriliyor.
 * **KNN çizgesi.** Teknik rapor KNN parametresini 1 olarak veriyor (Ek A.3). Kodda `construct_knn_graph` tanımlı ama kullanılmıyor; sunucu sözde prototipler için kenarsız bir çizge (`construct_self_loop_graph`) kuruyor.
+* **Veri setleri ve bağımlılıklar.** POWER'ın veri katmanı (`data.py`) bölme oranlarını Cora, CiteSeer, Computers, Physics, Actor, ogbn-arxiv, Flickr, Squirrel ve Roman-empire için tanımlıyor; Minesweeper için tanım yok, bu yüzden orijinal betik Minesweeper'da çalışmaz. Ortak cache kullanıldığı için bu kısıt harness'te geçerli değil. Kod derlenmiş bir eklenti (torch_scatter, torch_sparse, DGL) kullanmıyor; PyTorch Geometric'e, veri katmanı için de OpenFGL'e bağlı. `config.py`'de `--gpuid 0` ve yer tutucu bir `--root` var; `optuna_search.py` ise cihazı CPU'ya zorluyor (`args.disable_cuda = True`). Harness'te cihaz otomatik seçiliyor (GPU varsa GPU).
 * **`edge_masking`.** `task_data`, görev çizgesini `utils.edge_masking` ile kurmaya çalışıyor. Fonksiyon boolean bir maske üzerinde `for node in handled` ile döndüğü için görevler arası kenarları silmiyor ve self-loop'ları yalnızca 0 ve 1 numaralı düğümlere ekliyor (Bölüm 6.4'te küçük bir örnekle gösteriliyor). Harness bu fonksiyonu kullanmıyor; tüm yöntemlere aynı görev alt-çizgisini veriyor.
 
 ### 2.2 FedSPA (Tan vd., CVPR'25)
@@ -362,7 +363,7 @@ for p in PATCHES:
 
 md(r"""
 ### 5.2 POWER ve FedSPA
-**POWER:** algoritma dosyalarına (`flcore/Ours.py`, `model.py`, `utils.py`) dokunulmuyor. `flcore/` klasörü de FedFST'nin klasörleri gibi `__init__.py`'siz bir namespace package olduğu için aynı önlem (P0) burada da alınıyor. POWER'ın OpenFGL'den kullandığı tek fonksiyon (`idx_to_mask_tensor`) OpenFGL'den aynen kopyalanarak `fgcl_bench/shims/` altına konuyor. Veri arayüzü `fgcl_bench/runner_power.py`'deki adaptörde (Bölüm 5.4).
+**POWER:** ödevde tercih edilen yol seçildi: resmi istemci ve sunucu sınıfları (`flcore/Ours.py`) olduğu gibi import edilip harness'e bir adaptörle bağlandı. Bu yol mümkündü, çünkü POWER'ın algoritma kodu veri katmanından ayrık; veriyi yalnızca `self.data["data"]`, `self.data["task"]` ve `task_data()` üzerinden görüyor. Bu yüzden veri sözlüğü ortak cache'ten kuruldu ve bir alt sınıfta yalnızca `task_data` değiştirildi. Eğitim döngüsü POWER'ın `utils.start()` döngüsünün aynısı. Algoritma dosyalarına (`flcore/Ours.py`, `model.py`, `utils.py`) dokunulmuyor. `flcore/` klasörü de FedFST'nin klasörleri gibi `__init__.py`'siz bir namespace package olduğu için aynı önlem (P0) burada da alınıyor. POWER'ın OpenFGL'den kullandığı tek fonksiyon (`idx_to_mask_tensor`) OpenFGL'den aynen kopyalanarak `fgcl_bench/shims/` altına konuyor. Veri arayüzü `fgcl_bench/runner_power.py`'deki adaptörde (Bölüm 5.4).
 
 **FedSPA:** repoya yama yapılmıyor. Yöntem, gömülü flgo kopyasından ve DGL'den bağımsız olarak `fgcl_bench/fedspa_port.py`'ye taşındı (Bölüm 5.4 ve 6.2).
 """)
@@ -891,6 +892,8 @@ md(r"""
 17. M. Wang vd. *Deep Graph Library: A Graph-Centric, Highly-Performant Package for Graph Neural Networks.* arXiv:1909.01315 (DGL).
 """)
 
+for i, cell in enumerate(cells):
+    cell.id = f"cell-{i:03d}"   # deterministik kimlikler: yeniden üretimde diff yalnızca içerik değişikliklerini gösterir
 nb = new_notebook(cells=cells)
 nb.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
 nb.metadata["language_info"] = {"name": "python"}

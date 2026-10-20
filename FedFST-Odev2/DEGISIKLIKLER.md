@@ -35,7 +35,9 @@ Yamaların metni `tools/patches.py`'de; notebook'ta her biri ayrı bir hücre. H
 
 ## 3. POWER (Zenodo `zyl24-FCGL_POWER-78e30b6`) – adaptör (`fgcl_bench/runner_power.py`)
 
-Algoritma dosyalarına (`flcore/Ours.py`, `model.py`, `utils.py`, `config.py`) dokunulmadı.
+Algoritma dosyalarına (`flcore/Ours.py`, `model.py`, `utils.py`, `config.py`) dokunulmadı. Ödevde tercih edilen yol seçildi: resmi istemci/sunucu sınıfları import edilip harness'e bir adaptörle bağlandı. Bu yol mümkündü, çünkü algoritma kodu veriyi yalnızca `self.data["data"]`, `self.data["task"]` ve `task_data()` üzerinden görüyor.
+
+Koddan çıkardıklarım: giriş betiği `optuna_search.py` (300 denemelik Optuna araması; cihazı CPU'ya zorluyor). `data.py`, bölme oranlarını Cora, CiteSeer, Computers, Physics, Actor, ogbn-arxiv, Flickr, Squirrel ve Roman-empire için tanımlıyor; Minesweeper için tanımlamıyor. Bağımlılıklar torch, PyTorch Geometric, OpenFGL (veri katmanı ve tek bir yardımcı fonksiyon) ve optuna. Derlenmiş eklenti (torch_scatter, torch_sparse, DGL) yok. `config.py`'de `--gpuid 0` ve yer tutucu `--root` var.
 
 | Değişiklik | Neden |
 |---|---|
